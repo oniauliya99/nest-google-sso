@@ -10,6 +10,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
+import { JwtAuthGuard } from './jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -30,12 +31,18 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  async refreshToken(@Body() body) {
-    return this.authService.refreshToken(body.refreshToken);
+  async refreshToken(@Body() refreshToken: string) {
+    return this.authService.refreshToken(refreshToken);
   }
 
   @Get('success')
   success(@Req() req) {
     return req.query.token;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('protected')
+  async protectedRoute(@Req() req) {
+    return { message: 'You have access', user: req.user };
   }
 }
