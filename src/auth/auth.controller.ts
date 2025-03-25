@@ -14,12 +14,12 @@ export class AuthController {
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
-    return res.redirect(`/auth/success?user=${JSON.stringify(req.user)}`);
+    const user = await this.authService.validateUser(req.user);
+    return res.redirect(`/auth/success?user=${JSON.stringify(user)}`);
   }
 
   @Get('success')
   success(@Req() req) {
-    console.log(req.query);
     return req.query.user;
   }
 }
