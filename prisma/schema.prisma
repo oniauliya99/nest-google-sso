@@ -14,11 +14,22 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  name        String
-  picture     String?
-  accessToken String   @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String        @id @default(uuid())
+  email     String        @unique
+  name      String
+  picture   String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  sessions  OAuthSession?
+}
+
+model OAuthSession {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  provider     String // example : google
+  refreshToken String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
