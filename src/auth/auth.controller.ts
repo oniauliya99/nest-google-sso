@@ -27,7 +27,17 @@ export class AuthController {
       req.user,
       req.user.refreshToken,
     );
-    return res.redirect(`/auth/success?token=${accessToken}`);
+
+    res.cookie('refreshToken', req.user.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.redirect(
+      `http://192.168.60.43:8000/auth/success?token=${accessToken}`,
+    );
   }
 
   @Post('refresh-token')
