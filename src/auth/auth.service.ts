@@ -31,13 +31,13 @@ export class AuthService {
     await this.prismaService.oAuthSession.upsert({
       where: { userId: user.id },
       update: {
-        refreshToken,
+        refreshToken: refreshToken || null,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      }, // Expire dalam 30 hari
+      },
       create: {
         userId: user.id,
         provider: 'google',
-        refreshToken,
+        refreshToken: refreshToken || null,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
     });
@@ -47,7 +47,7 @@ export class AuthService {
       email: user.email,
     });
 
-    return { accessToken };
+    return { accessToken, refreshToken };
   }
 
   async generateAccessToken(userId: string, email: string) {

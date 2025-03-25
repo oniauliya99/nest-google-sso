@@ -10,8 +10,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
       callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL'),
-      scope: ['email', 'profile'],
+      scope: ['email', 'profile', 'openid'],
     });
+  }
+  authorizationParams(): Record<string, string> {
+    return {
+      access_type: 'offline',
+      prompt: 'consent',
+    };
   }
 
   async validate(
@@ -26,6 +32,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       name: name.givenName,
       picture: photos[0].value,
       accessToken,
+      refreshToken,
     };
     done(null, user);
   }
